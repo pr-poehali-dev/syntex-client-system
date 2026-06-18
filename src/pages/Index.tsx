@@ -7,6 +7,7 @@ import Account from '@/pages/Account';
 
 const navLinks = [
   { label: 'Главная', href: '#home' },
+  { label: 'Лаунчер', href: '#launcher' },
   { label: 'Тарифы', href: '#pricing' },
   { label: 'Кабинет', href: '#account' },
   { label: 'Поддержка', href: '#support' },
@@ -36,13 +37,6 @@ const features = [
   { icon: 'Lock', title: 'HTTPS везде', desc: 'Все коммуникации шифруются на каждом уровне.' },
 ];
 
-const liveActivity = [
-  { user: 'dr4gon_', action: 'активировал AutoSell', time: '2с назад' },
-  { user: 'xvoidk', action: 'купил тариф 90 дней', time: '14с назад' },
-  { user: 'n1ghtfall', action: 'сбросил HWID', time: '1м назад' },
-  { user: 'spectral.exe', action: 'купил тариф Навсегда', time: '3м назад' },
-  { user: 'rq_ghost', action: 'активировал ESP', time: '5м назад' },
-];
 
 const Index = () => {
   const { user } = useAuth();
@@ -169,46 +163,148 @@ const Index = () => {
               </div>
             </div>
 
-            {/* live activity widget */}
+            {/* launcher mock */}
             <div className="relative">
-              <div className="rounded-2xl border border-border bg-card/80 backdrop-blur overflow-hidden shadow-2xl shadow-primary/10">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
-                  <div className="flex items-center gap-2">
-                    <span className="size-2 rounded-full bg-primary animate-pulse" />
-                    <span className="font-heading text-xs uppercase tracking-widest text-muted-foreground">Live активность</span>
-                  </div>
-                  <span className="font-mono text-xs text-muted-foreground">online: 843</span>
+              <div className="rounded-2xl border border-border bg-card/90 backdrop-blur overflow-hidden shadow-2xl shadow-primary/10">
+                {/* title bar */}
+                <div className="flex items-center gap-2 px-4 h-10 border-b border-border bg-secondary/50 select-none">
+                  <span className="size-2.5 rounded-full bg-red-500/70" />
+                  <span className="size-2.5 rounded-full bg-yellow-500/70" />
+                  <span className="size-2.5 rounded-full bg-primary/70" />
+                  <span className="ml-3 font-mono text-xs text-muted-foreground">syntex-launcher.exe</span>
+                  <span className="ml-auto font-mono text-[10px] text-muted-foreground">v2.4.1</span>
                 </div>
-                <div className="divide-y divide-border/40">
-                  {liveActivity.map((a, i) => (
-                    <div key={i} className="flex items-center justify-between px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className="size-7 rounded-lg bg-gradient-to-br from-primary/40 to-accent/40 flex items-center justify-center text-xs font-bold text-white">
-                          {a.user[0].toUpperCase()}
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium">{a.user}</span>
-                          <span className="text-sm text-muted-foreground"> {a.action}</span>
-                        </div>
+                {/* sidebar + content */}
+                <div className="flex">
+                  {/* left sidebar */}
+                  <div className="w-14 bg-secondary/30 border-r border-border/60 flex flex-col items-center py-4 gap-3">
+                    {['Home', 'Package', 'Settings', 'HelpCircle'].map((ic, i) => (
+                      <div key={ic} className={`size-8 rounded-lg flex items-center justify-center transition-colors ${i === 0 ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-secondary/60'}`}>
+                        <Icon name={ic} size={16} />
                       </div>
-                      <span className="text-[11px] font-mono text-muted-foreground shrink-0 ml-2">{a.time}</span>
+                    ))}
+                  </div>
+                  {/* main area */}
+                  <div className="flex-1 p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Вошёл как</p>
+                        <p className="font-semibold text-sm">IIpoteka</p>
+                      </div>
+                      <span className="text-[10px] font-mono px-2 py-1 rounded bg-primary/15 text-primary border border-primary/30">НАВСЕГДА</span>
                     </div>
-                  ))}
+                    <div className="space-y-2 mb-4">
+                      {[
+                        { name: 'AutoSell', on: true },
+                        { name: 'KillAura', on: false },
+                        { name: 'ESP', on: true },
+                        { name: 'Fly', on: false },
+                      ].map((m) => (
+                        <div key={m.name} className="flex items-center justify-between rounded-lg bg-secondary/40 border border-border/50 px-3 py-2.5">
+                          <div className="flex items-center gap-2">
+                            <span className={`size-1.5 rounded-full ${m.on ? 'bg-primary' : 'bg-muted-foreground/40'}`} />
+                            <span className="text-sm font-medium">{m.name}</span>
+                          </div>
+                          <span className={`relative inline-flex h-4 w-7 items-center rounded-full ${m.on ? 'bg-primary' : 'bg-muted'}`}>
+                            <span className={`inline-block size-3 rounded-full bg-white transition-transform ${m.on ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-lg text-sm font-medium">
+                      <Icon name="Play" size={14} className="mr-1.5" /> Запустить Minecraft
+                    </Button>
+                  </div>
                 </div>
-                <div className="px-5 py-4 border-t border-border/60 grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <p className="font-heading font-bold text-lg">1 240</p>
-                    <p className="text-[10px] text-muted-foreground">продаж сегодня</p>
+                {/* status bar */}
+                <div className="flex items-center justify-between px-4 py-2 border-t border-border/60 bg-secondary/20">
+                  <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono">
+                    <span className="size-1.5 rounded-full bg-primary animate-pulse" />
+                    API connected
                   </div>
-                  <div>
-                    <p className="font-heading font-bold text-lg">38ms</p>
-                    <p className="text-[10px] text-muted-foreground">отклик API</p>
-                  </div>
-                  <div>
-                    <p className="font-heading font-bold text-lg">v2.4.1</p>
-                    <p className="text-[10px] text-muted-foreground">актуальная</p>
-                  </div>
+                  <span className="text-[10px] font-mono text-muted-foreground">Fabric 1.21 · 38ms</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* LAUNCHER DOWNLOAD */}
+      <section id="launcher" className="py-24 border-t border-border/60">
+        <div className="container">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="font-mono text-xs text-primary uppercase tracking-widest mb-3">Лаунчер</p>
+              <h2 className="font-heading text-4xl font-bold tracking-tight uppercase mb-4">
+                Скачай и запускай<br />
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">за 2 минуты</span>
+              </h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                Лаунчер автоматически скачивает нужную версию Fabric, инжектит мод и синхронизирует настройки с твоим аккаунтом. Просто нажми «Запустить».
+              </p>
+              <div className="space-y-3 mb-8">
+                {[
+                  { icon: 'MonitorDown', text: 'Поддерживает Windows 10 / 11' },
+                  { icon: 'Zap', text: 'Автоустановка Fabric 1.21' },
+                  { icon: 'RefreshCw', text: 'Авто-обновление модулей при запуске' },
+                  { icon: 'ShieldCheck', text: 'Проверка HWID и лицензии' },
+                ].map((f) => (
+                  <div key={f.text} className="flex items-center gap-3">
+                    <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon name={f.icon} size={15} className="text-primary" />
+                    </div>
+                    <span className="text-sm">{f.text}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-7 rounded-lg font-medium">
+                  <Icon name="Download" size={18} className="mr-2" /> Скачать .exe
+                  <span className="ml-2 text-xs opacity-70">v2.4.1</span>
+                </Button>
+                <Button size="lg" variant="outline" className="h-12 px-7 border-border bg-card/40 hover:bg-card rounded-lg">
+                  <Icon name="FileText" size={18} className="mr-2" /> Changelog
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-4">Размер: ~18 МБ · Требуется Java 17+</p>
+            </div>
+
+            {/* changelog card */}
+            <div className="rounded-2xl border border-border bg-card/60 overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border/60 bg-secondary/30">
+                <div className="flex items-center gap-2">
+                  <Icon name="GitBranch" size={15} className="text-primary" />
+                  <span className="font-heading text-sm uppercase tracking-wide">Changelog</span>
+                </div>
+                <span className="font-mono text-xs text-primary border border-primary/30 rounded px-2 py-0.5">v2.4.1</span>
+              </div>
+              <div className="divide-y divide-border/40">
+                {[
+                  { version: 'v2.4.1', date: '15 июн 2026', tag: 'latest', items: ['Исправлена синхронизация настроек ESP', 'Оптимизирован AutoSell под 1.21.4', 'Снижено потребление RAM на 12%'] },
+                  { version: 'v2.4.0', date: '2 июн 2026', tag: 'stable', items: ['Добавлен модуль Scaffold', 'Новый UI лаунчера', 'Поддержка Fabric 1.21'] },
+                  { version: 'v2.3.8', date: '18 мая 2026', tag: null, items: ['Патч обхода анти-чита', 'Фикс Fly на серверах Paper'] },
+                ].map((rel) => (
+                  <div key={rel.version} className="px-6 py-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-mono text-sm font-semibold">{rel.version}</span>
+                      {rel.tag && (
+                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${rel.tag === 'latest' ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-secondary text-muted-foreground border border-border'}`}>
+                          {rel.tag}
+                        </span>
+                      )}
+                      <span className="text-xs text-muted-foreground ml-auto">{rel.date}</span>
+                    </div>
+                    <ul className="space-y-1">
+                      {rel.items.map((it) => (
+                        <li key={it} className="flex items-start gap-2 text-xs text-muted-foreground">
+                          <span className="text-primary mt-0.5">—</span>
+                          {it}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

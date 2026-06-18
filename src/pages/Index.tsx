@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
+import AuthModal from '@/components/AuthModal';
+import Account from '@/pages/Account';
 
 const navLinks = [
   { label: 'Главная', href: '#home' },
@@ -33,11 +36,30 @@ const features = [
   { icon: 'Lock', title: 'HTTPS везде', desc: 'Все коммуникации шифруются на каждом уровне.' },
 ];
 
+const liveActivity = [
+  { user: 'dr4gon_', action: 'активировал AutoSell', time: '2с назад' },
+  { user: 'xvoidk', action: 'купил тариф 90 дней', time: '14с назад' },
+  { user: 'n1ghtfall', action: 'сбросил HWID', time: '1м назад' },
+  { user: 'spectral.exe', action: 'купил тариф Навсегда', time: '3м назад' },
+  { user: 'rq_ghost', action: 'активировал ESP', time: '5м назад' },
+];
+
 const Index = () => {
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [authModal, setAuthModal] = useState<null | 'login' | 'register'>(null);
+  const [showAccount, setShowAccount] = useState(false);
+
+  if (showAccount && user) {
+    return <Account onGoHome={() => setShowAccount(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased overflow-x-hidden selection:bg-primary/30">
+      {authModal && (
+        <AuthModal defaultTab={authModal} onClose={() => setAuthModal(null)} />
+      )}
+
       {/* NAV */}
       <header className="fixed top-0 inset-x-0 z-50 border-b border-border/60 bg-background/75 backdrop-blur-xl">
         <div className="container flex items-center justify-between h-16">
@@ -50,17 +72,38 @@ const Index = () => {
 
           <nav className="hidden md:flex items-center gap-9">
             {navLinks.map((l) => (
-              <a key={l.label} href={l.href} className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                key={l.label}
+                href={l.href === '#account' ? undefined : l.href}
+                onClick={l.href === '#account' ? () => user ? setShowAccount(true) : setAuthModal('login') : undefined}
+                className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              >
                 {l.label}
               </a>
             ))}
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Войти</Button>
-            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-lg">
-              <Icon name="Download" size={16} className="mr-1.5" /> Скачать
-            </Button>
+            {user ? (
+              <button
+                onClick={() => setShowAccount(true)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary/60 transition-colors text-sm"
+              >
+                <div className="size-5 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-[10px] font-bold">
+                  {user.username[0].toUpperCase()}
+                </div>
+                {user.username}
+              </button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => setAuthModal('login')}>
+                  Войти
+                </Button>
+                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-lg" onClick={() => setAuthModal('register')}>
+                  Регистрация
+                </Button>
+              </>
+            )}
           </div>
 
           <button className="md:hidden text-foreground" onClick={() => setMenuOpen(!menuOpen)}>
@@ -72,7 +115,9 @@ const Index = () => {
             {navLinks.map((l) => (
               <a key={l.label} href={l.href} className="text-sm text-muted-foreground" onClick={() => setMenuOpen(false)}>{l.label}</a>
             ))}
-            <Button size="sm" className="bg-primary text-primary-foreground w-full rounded-lg">Скачать</Button>
+            <Button size="sm" className="bg-primary text-primary-foreground w-full rounded-lg" onClick={() => setAuthModal('login')}>
+              Войти
+            </Button>
           </div>
         )}
       </header>
@@ -124,36 +169,45 @@ const Index = () => {
               </div>
             </div>
 
-            {/* launcher mock */}
+            {/* live activity widget */}
             <div className="relative">
               <div className="rounded-2xl border border-border bg-card/80 backdrop-blur overflow-hidden shadow-2xl shadow-primary/10">
-                <div className="flex items-center gap-2 px-4 h-10 border-b border-border bg-secondary/40">
-                  <span className="size-2.5 rounded-full bg-destructive/70" />
-                  <span className="size-2.5 rounded-full bg-yellow-500/70" />
-                  <span className="size-2.5 rounded-full bg-primary/70" />
-                  <span className="ml-3 font-mono text-xs text-muted-foreground">syntex-launcher.exe</span>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-primary animate-pulse" />
+                    <span className="font-heading text-xs uppercase tracking-widest text-muted-foreground">Live активность</span>
+                  </div>
+                  <span className="font-mono text-xs text-muted-foreground">online: 843</span>
                 </div>
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Авторизован как</p>
-                      <p className="font-semibold">IIpoteka</p>
-                    </div>
-                    <span className="text-[10px] font-mono px-2 py-1 rounded bg-primary/15 text-primary border border-primary/30">LICENSE ACTIVE</span>
-                  </div>
-                  <div className="space-y-2.5">
-                    {['AutoSell', 'KillAura', 'ESP', 'Fly'].map((m, i) => (
-                      <div key={m} className="flex items-center justify-between rounded-lg bg-secondary/50 px-4 py-3 border border-border/50">
-                        <span className="text-sm font-medium">{m}</span>
-                        <span className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${i < 2 ? 'bg-primary' : 'bg-muted'}`}>
-                          <span className={`inline-block size-3.5 rounded-full bg-white transition-transform ${i < 2 ? 'translate-x-4' : 'translate-x-1'}`} />
-                        </span>
+                <div className="divide-y divide-border/40">
+                  {liveActivity.map((a, i) => (
+                    <div key={i} className="flex items-center justify-between px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="size-7 rounded-lg bg-gradient-to-br from-primary/40 to-accent/40 flex items-center justify-center text-xs font-bold text-white">
+                          {a.user[0].toUpperCase()}
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium">{a.user}</span>
+                          <span className="text-sm text-muted-foreground"> {a.action}</span>
+                        </div>
                       </div>
-                    ))}
+                      <span className="text-[11px] font-mono text-muted-foreground shrink-0 ml-2">{a.time}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-5 py-4 border-t border-border/60 grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="font-heading font-bold text-lg">1 240</p>
+                    <p className="text-[10px] text-muted-foreground">продаж сегодня</p>
                   </div>
-                  <Button className="w-full mt-6 bg-primary text-primary-foreground hover:bg-primary/90 h-11 rounded-lg font-medium">
-                    <Icon name="Play" size={16} className="mr-2" /> Запустить Minecraft
-                  </Button>
+                  <div>
+                    <p className="font-heading font-bold text-lg">38ms</p>
+                    <p className="text-[10px] text-muted-foreground">отклик API</p>
+                  </div>
+                  <div>
+                    <p className="font-heading font-bold text-lg">v2.4.1</p>
+                    <p className="text-[10px] text-muted-foreground">актуальная</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -189,14 +243,16 @@ const Index = () => {
                   <span className="font-heading text-4xl font-bold">{p.price}</span>
                   <span className="text-muted-foreground mb-1.5">₽</span>
                 </div>
-                <Button className={`w-full rounded-lg h-11 font-medium ${p.popular ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-secondary text-foreground hover:bg-secondary/70'}`}>
+                <Button
+                  className={`w-full rounded-lg h-11 font-medium ${p.popular ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-secondary text-foreground hover:bg-secondary/70'}`}
+                  onClick={() => !user && setAuthModal('register')}
+                >
                   Купить доступ
                 </Button>
               </div>
             ))}
           </div>
 
-          {/* perks + HWID reset */}
           <div className="grid lg:grid-cols-3 gap-5">
             <div className="lg:col-span-2 rounded-2xl border border-border bg-card/40 p-7">
               <p className="font-heading text-sm uppercase tracking-wide text-muted-foreground mb-4">В любой тариф входит</p>
@@ -217,7 +273,10 @@ const Index = () => {
               <p className="text-sm text-muted-foreground mb-5 flex-1">Сменил компьютер или комплектующие? Отвяжи лицензию от старого железа.</p>
               <div className="flex items-end justify-between">
                 <span className="font-heading text-3xl font-bold">100 ₽</span>
-                <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-lg">Сбросить</Button>
+                <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-lg"
+                  onClick={() => !user && setAuthModal('login')}>
+                  Сбросить
+                </Button>
               </div>
             </div>
           </div>
@@ -254,8 +313,13 @@ const Index = () => {
               <h2 className="font-heading text-4xl font-bold tracking-tight mb-4 uppercase">Залетай в игру</h2>
               <p className="text-muted-foreground max-w-md mx-auto mb-8">Регистрация, лаунчер и активация лицензии — пара минут, и ты в деле.</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8 rounded-lg font-medium">Создать аккаунт</Button>
-                <Button size="lg" variant="outline" className="h-12 px-8 border-border bg-background/40 rounded-lg">Написать в поддержку</Button>
+                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8 rounded-lg font-medium"
+                  onClick={() => setAuthModal('register')}>
+                  Создать аккаунт
+                </Button>
+                <Button size="lg" variant="outline" className="h-12 px-8 border-border bg-background/40 rounded-lg">
+                  Написать в поддержку
+                </Button>
               </div>
             </div>
           </div>

@@ -20,8 +20,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				display: ['Sora', 'sans-serif'],
-				mono: ['Space Mono', 'monospace']
+				display: ['IBM Plex Sans', 'sans-serif'],
+				heading: ['Oswald', 'sans-serif'],
+				mono: ['JetBrains Mono', 'monospace']
 			},
 			colors: {
 				border: 'hsl(var(--border))',
